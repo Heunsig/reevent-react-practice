@@ -39,16 +39,13 @@ class EventListItem extends Component {
         </Segment>
         <Segment clearing>
           <span>{event.description}</span>
-          <Button 
-            onClick={() => deleteEvent(event.id)} 
+          <Button onClick={() => deleteEvent(event.id)} 
             as="a" 
             color="red" 
-            floated="right" 
+            floated="right"   
             content="Delete" 
           />
-          <Button 
-            onClick={() => selectEvent(event)} 
-            as="a" 
+          <Button onClick={() => selectEvent(event)} as="a" 
             color="teal" 
             floated="right" 
             content="View" 

@@ -8,6 +8,7 @@
     "firebase": "^6.0.2",
     "google-map-react": "^1.1.4",
     "moment": "^2.22.0",
+    "npm": "^6.12.1",
     "react": "^16.8.6",
     "react-cropper": "^1.2.0",
     "react-datepicker": "2.5.0",
@@ -27,7 +28,9 @@
     "redux-form": "^7.4.2",
     "redux-thunk": "^2.3.0",
     "revalidate": "^1.2.0",
-    "semantic-ui-react": "^0.87.1"
+    "semantic-ui-react": "^0.87.1",
+    "to": "^0.2.9",
+    "update": "^0.7.4"
   },
   "scripts": {
     "analyze": "source-map-explorer 'build/static/js/*.js'",
@@ -54,7 +57,7 @@
   },
   "devDependencies": {
     "@types/react-redux-toastr": "^7.4.1",
-    "@types/react-router-dom": "^4.3.3",
+    "@types/react-router-dom": "^4.3.5",
     "redux-devtools-extension": "^2.13.8",
     "source-map-explorer": "^1.5.0",
     "typescript": "^3.3"
