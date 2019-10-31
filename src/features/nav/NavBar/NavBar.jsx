@@ -26,7 +26,7 @@ class NavBar extends Component {
             <img src="/assets/logo.png" alt="logo"/>
             Re-vents
           </Menu.Item>
-          <Menu.Item as={ NavLink } to='/events'>Events</Menu.Item>
+          <Menu.Item as={ NavLink } exact to='/events'>Events</Menu.Item>
           <Menu.Item as={ NavLink } to='/people'>People</Menu.Item>
           <Menu.Item as={ NavLink } to='/test'>Test</Menu.Item>
           <Menu.Item>
