@@ -9,7 +9,6 @@ const ModalManage = ({currentModal}) => {
 
   if (currentModal) {
     const { modalType, modalProps } = currentModal
-    console.log(currentModal)
     const ModalComponent = modalLookup[modalType]
 
     renderedModal = <ModalComponent {...modalProps} />
