@@ -32,7 +32,7 @@ const EventDetailedHeader = ({ event }) => {
                   style={{ color: 'white' }}
                 />
                 <p>
-                  { event.date && format(parseISO(event.date), 'EEEE do LLLL')}
+                  { event.date && format(event.date.toDate(), 'EEEE do LLLL')}
                 </p>
                 <p>
                   Hosted by <strong>{event.hostedBy}</strong>

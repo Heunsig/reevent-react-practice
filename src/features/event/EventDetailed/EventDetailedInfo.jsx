@@ -26,9 +26,9 @@ const EventDetailedInfo = ({ event }) => {
           <Grid.Column width={15}>
             {event.date && 
               <span>
-                {format(parseISO(event.date), 'EEEE do LLL')} 
+                {format(event.date.toDate(), 'EEEE do LLL')} 
                 {' '}at{' '} 
-                {format(parseISO(event.date), 'h:mm a')}
+                {format(event.date.toDate(), 'h:mm a')}
               </span>
             }
           </Grid.Column>
@@ -40,7 +40,7 @@ const EventDetailedInfo = ({ event }) => {
             <Icon name="marker" size="large" color="teal" />
           </Grid.Column>
           <Grid.Column width={11}>
-            <span>event.venue</span>
+            <span>{event.venue}</span>
           </Grid.Column>
           <Grid.Column width={4}>
             <Button 

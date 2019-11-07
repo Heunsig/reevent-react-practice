@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
-import { Segment, Item, Icon, List, Button } from 'semantic-ui-react'
+import { Segment, Item, Icon, List, Button, Label } from 'semantic-ui-react'
 import EventListAttendee from './EventListAttendee'
 import { Link } from 'react-router-dom'
-import { format, parseISO } from 'date-fns'
+import { format } from 'date-fns'
 
 class EventListItem extends Component {
   render() {
     const { 
-      event, 
-      deleteEvent 
+      event
     } = this.props
     
     return (
@@ -26,6 +25,9 @@ class EventListItem extends Component {
                 <Item.Description>
                   Hosted by {event.hostedbY}
                 </Item.Description>
+                { event.cancelled && 
+                   <Label style={{top: '-40px'}} ribbon='right' color='red' content='This event has been cancelled'/>
+                }
               </Item.Content>
             </Item>
           </Item.Group>
@@ -33,27 +35,22 @@ class EventListItem extends Component {
         <Segment>
           <span>
             <Icon name="clock" /> 
-            {format(parseISO(event.date), 'EEEE do LLL')} 
+            {format(event.date.toDate(), 'EEEE do LLL')} 
             {' '}at{' '} 
-            {format(parseISO(event.date), 'h:mm a')} |
+            {format(event.date.toDate(), 'h:mm a')} |
             <Icon name="marker" /> {event.venue}
           </span>
         </Segment>
         <Segment secondary>
           <List horizontal>
-            {event.attendees && event.attendees.map(attendee => (
-              <EventListAttendee key={attendee.id} attendee={attendee}/>
+            {event.attendees &&     
+              Object.values(event.attendees).map((attendee, index)=> (
+              <EventListAttendee key={index} attendee={attendee}/>
             ))}
           </List>
         </Segment>
         <Segment clearing>
           <span>{event.description}</span>
-          <Button onClick={() => deleteEvent(event.id)} 
-            as="a" 
-            color="red" 
-            floated="right"   
-            content="Delete" 
-          />
           <Button 
             as={Link} 
             to={`/events/${event.id}`}

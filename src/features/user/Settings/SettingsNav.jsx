@@ -19,7 +19,7 @@ const SettingsNav = (props) => {
           color="grey"
           content="Account"
         />
-        <Menu.Item>My Account</Menu.Item>
+        <Menu.Item as={NavLink} to='/settings/account'>My Account</Menu.Item>
       </Menu>
     </Fragment>
   )
