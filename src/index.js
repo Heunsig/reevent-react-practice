@@ -5,7 +5,7 @@ import App from './app/layout/App'
 import ReduxToastr from 'react-redux-toastr'
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css'
 import * as serviceWorker from './serviceWorker'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from './app/store/configureStore'
 import ScrollToTop from './app/common/util/ScrollToTop'
@@ -19,7 +19,7 @@ const rootEl = document.getElementById('root')
 const render = () => {
   ReactDOM.render(
     <Provider store={store}>
-      <BrowserRouter>
+      <HashRouter>
         <ScrollToTop>
           <ReduxToastr
             position='bottom-right'
@@ -28,7 +28,7 @@ const render = () => {
            />
            <App/>
         </ScrollToTop>
-      </BrowserRouter>      
+      </HashRouter>      
     </Provider>
   , rootEl)
 }
