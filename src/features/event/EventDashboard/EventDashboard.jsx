@@ -8,12 +8,12 @@ import EventActivity from '../EventActivity/EventActivity'
 //   updateEvent
 // } from '../eventActions'
 import LoadingComponent from '../../../app/layout/LoadingComponent'
-import { firestoreConnect } from 'react-redux-firebase'
+import { firestoreConnect, isLoaded } from 'react-redux-firebase'
 
 class EventDashboard extends Component {
   render() {
-    const { events, loading } = this.props
-    if (loading) return <LoadingComponent inverted={false}/>
+    const { events } = this.props
+    if (!isLoaded(events)) return <LoadingComponent inverted={false}/>
 
     return (
       <Grid>
@@ -33,7 +33,7 @@ class EventDashboard extends Component {
 const mapStateToProps = (state) => {
   return {
     events: state.firestore.ordered.events,
-    loading: state.async.loading
+    // loading: state.async.loading
   }
 }
 

@@ -1,43 +1,57 @@
 import React from 'react';
 import { compose } from 'redux'
 import { connect } from 'react-redux'
-import { firestoreConnect } from 'react-redux-firebase'
+import { firestoreConnect, isEmpty } from 'react-redux-firebase'
 import { Grid } from "semantic-ui-react";
 import UserDetailedHeader from './UserDetailedHeader'
 import Photos from './Photos'
 import UserDetailedSidebar from './UserDetailedSidebar'
 import UsderDetailedDescription from './UsderDetailedDescription'
 import UserDetailedEvents from './UserDetailedEvents'
+import { userDetailedQuery } from '../userQueires'
+import LoadingComponent from '../../../app/layout/LoadingComponent'
 
+const mapStateToProps = (state, ownProps) => {
+  let userUid = null
+  let profile = {}
 
-const mapStateToProps = (state) => {
+  if (ownProps.match.params.id === state.auth.uid) {
+    profile = state.firebase.profile
+  } else {
+    profile = !isEmpty(state.firestore.ordered.profile) && state.firestore.ordered.profile[0]
+    userUid = ownProps.match.params.id
+  }
   return {
+    profile,
+    userUid,
     auth: state.firebase.auth,
-    profile: state.firebase.profile,
+    // profile: state.firebase.profile,
     photos: state.firestore.ordered.photos,
+    requesting: state.firestore.status.requesting
   }
 }
 
-const query = ({auth}) => {
-  return [{
-    collection: 'users',
-    doc: auth.uid,
-    subcollections: [{collection: 'photos'}],
-    storeAs: 'photos'
-  }]
-}
 
 const UserDetailedPage = ({
   profile,
-  photos
+  photos,
+  auth,
+  match,
+  requesting
 }) => {
+  
+  const isCurrentUser = auth.uid === match.params.id
+  const loading = Object.values(requesting).some(a => a === true)
+
+  if (loading) return <LoadingComponent />
+
   return (
     <Grid>
       <UserDetailedHeader profile={profile}/>
       <UsderDetailedDescription profile={profile}/>
-      <UserDetailedSidebar />
+      <UserDetailedSidebar isCurrentUser={isCurrentUser}/>
       {photos && photos.length > 0 &&
-      <Photos photos={photos}/>
+        <Photos photos={photos}/>
       }
       <UserDetailedEvents />
     </Grid>  
@@ -46,6 +60,6 @@ const UserDetailedPage = ({
 
 export default compose(
   connect(mapStateToProps),
-  firestoreConnect(auth=> query(auth))
+  firestoreConnect((auth, userUid)=> userDetailedQuery(auth, userUid))
 )(UserDetailedPage)
 

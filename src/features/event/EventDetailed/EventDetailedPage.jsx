@@ -2,33 +2,45 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux'
 import { withFirestore } from 'react-redux-firebase'
 import { Grid } from 'semantic-ui-react'
-import { toastr } from 'react-redux-toastr'
+// import { toastr } from 'react-redux-toastr'
 import EventDetailedHeader from './EventDetailedHeader'
 import EventDetailedInfo from './EventDetailedInfo'
 import EventDetailedChat from './EventDetailedChat'
 import EventDetailedSidebar from './EventDetailedSidebar'
 import { objectToArray } from '../../../app/common/util/helpers'
+import { goingToEvent, cancelGoingToEvent } from '../../user/userActions'
 
-const EventDetailedPage = ({event, firestore, match, history}) => {
+const EventDetailedPage = ({event, firestore, match, history, auth, goingToEvent, cancelGoingToEvent}) => {
 
   useEffect(() => {
 
     (async () => {
-      let event = await firestore.get(`events/${match.params.id}`)
-      if (!event.exists) {
-        history.push('/events')
-        toastr.error('Sorry', 'Event no found')
+      await firestore.setListener(`events/${match.params.id}`)
+      // if (!event.exists) {
+      //   history.push('/events')
+      //   toastr.error('Sorry', 'Event no found')
+      // }
+      return async () => {
+        await firestore.unsetListener(`events/${match.params.id}`)
       }
     })()
 
   }, [firestore, match, history])
 
   const attendees = event && event.attendees && objectToArray(event.attendees)
+  const isHost = event.hostUid === auth.uid
+  const isGoing = attendees && attendees.some(a => a.id === auth.uid)
 
   return (
     <Grid>
       <Grid.Column width={10}>
-        <EventDetailedHeader event={event}/>
+        <EventDetailedHeader 
+          event={event} 
+          isGoing={isGoing} 
+          isHost={isHost}
+          goingToEvent={goingToEvent}
+          cancelGoingToEvent={cancelGoingToEvent}
+        />
         <EventDetailedInfo event={event}/>
         <EventDetailedChat/>
       </Grid.Column>
@@ -48,7 +60,8 @@ const mapStateToProps = (state, ownProps) => {
   }
 
   return { 
-    event
+    event,
+    auth: state.firebase.auth
   }
 }
-export default withFirestore(connect(mapStateToProps)(EventDetailedPage));
+export default withFirestore(connect(mapStateToProps, { goingToEvent, cancelGoingToEvent })(EventDetailedPage));

@@ -12,8 +12,6 @@ import {
 } from 'revalidate'
 import { Segment, Form, Button, Grid, Header } from 'semantic-ui-react'
 import { createEvent, updateEvent, cancelToggle } from '../eventActions'
-// import cuid from 'cuid'
-import { toastr } from 'react-redux-toastr'
 import { withFirestore } from 'react-redux-firebase'
 import TextInput from '../../../app/common/form/TextInput'
 import TextArea from '../../../app/common/form/TextArea'
@@ -49,6 +47,11 @@ class EventForm extends Component {
     //     venueLatLng: event.data().venueLatLng
     //   })
     // }
+  }
+
+  async componentWillUnmount() {
+    const { firestore, match } = this.props
+    await firestore.unsetListener(`events/${match.params.id}`)
   }
 
   onFormSubmit = async values => {
