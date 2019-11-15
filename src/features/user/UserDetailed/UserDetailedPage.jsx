@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { compose } from 'redux'
 import { connect } from 'react-redux'
 import { firestoreConnect, isEmpty } from 'react-redux-firebase'
@@ -10,6 +10,7 @@ import UsderDetailedDescription from './UsderDetailedDescription'
 import UserDetailedEvents from './UserDetailedEvents'
 import { userDetailedQuery } from '../userQueires'
 import LoadingComponent from '../../../app/layout/LoadingComponent'
+import { getUserEvents } from '../userActions'
 
 const mapStateToProps = (state, ownProps) => {
   let userUid = null
@@ -27,8 +28,14 @@ const mapStateToProps = (state, ownProps) => {
     auth: state.firebase.auth,
     // profile: state.firebase.profile,
     photos: state.firestore.ordered.photos,
-    requesting: state.firestore.status.requesting
+    requesting: state.firestore.status.requesting,
+    events: state.events,
+    eventsLoading: state.async.loading
   }
+}
+
+const actions = {
+  getUserEvents
 }
 
 
@@ -37,11 +44,27 @@ const UserDetailedPage = ({
   photos,
   auth,
   match,
-  requesting
+  requesting,
+  getUserEvents,
+  userUid,
+  events,
+  eventsLoading
 }) => {
   
+  useEffect(() => {
+    (async () => {
+      let events = await getUserEvents(userUid)
+      // console.log(events)
+    })()
+  }, [])
+
   const isCurrentUser = auth.uid === match.params.id
   const loading = Object.values(requesting).some(a => a === true)
+
+  let changeTab = (e, data) => {
+    console.log(data)
+    getUserEvents(userUid, data.activeIndex)
+  }
 
   if (loading) return <LoadingComponent />
 
@@ -53,13 +76,17 @@ const UserDetailedPage = ({
       {photos && photos.length > 0 &&
         <Photos photos={photos}/>
       }
-      <UserDetailedEvents />
+      <UserDetailedEvents 
+        events={events} 
+        eventsLoading={eventsLoading}
+        changeTab={changeTab}
+      />
     </Grid>  
   );
 }
 
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, actions),
   firestoreConnect((auth, userUid)=> userDetailedQuery(auth, userUid))
 )(UserDetailedPage)
 

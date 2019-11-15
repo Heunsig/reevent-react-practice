@@ -32,7 +32,8 @@ class CropperInput extends Component {
         preview='.img-preview'
         viewMode={1}
         dragMode='move'
-        aspectRatio={16 / 9}
+         /*aspectRatio={16 / 9}*/
+        aspectRatio={1 / 1}
         guides={false}
         scaleable={true}
         cropBoxMovable={true}
