@@ -55,7 +55,7 @@ const UserDetailedPage = ({
     (async () => {
       await getUserEvents(userUid)
     })()
-  }, [])
+  })
 
   const isCurrentUser = auth.uid === match.params.id
   const loading = Object.values(requesting).some(a => a === true)

@@ -28,7 +28,7 @@
     "redux-form": "^7.4.2",
     "redux-thunk": "^2.3.0",
     "revalidate": "^1.2.0",
-    "semantic-ui-react": "^0.87.1",
+    "semantic-ui-react": "^0.88.1",
     "to": "^0.2.9",
     "update": "^0.7.4"
   },
