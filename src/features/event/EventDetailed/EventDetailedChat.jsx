@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Segment, Header, Comment, Form, Button } from 'semantic-ui-react'
+import { Segment, Header, Comment } from 'semantic-ui-react'
 import { Link }  from 'react-router-dom'
 import EventDetailedChatForm from './EventDetailedChatForm'
 import { formatDistance } from 'date-fns'
@@ -67,8 +67,8 @@ class EventDetailedChat extends Component {
                 
                 {comment.childNodes && 
                   comment.childNodes.map(child => (
-                    <Comment.Group>
-                      <Comment key={child.id}>
+                    <Comment.Group key={child.id}>
+                      <Comment>
                         <Comment.Avatar src={child.photoURL || "/assets/user.png"} />
                         <Comment.Content>
                           <Comment.Author as={Link} to={`/profile/${child.uid}`}>{child.displayName}</Comment.Author>

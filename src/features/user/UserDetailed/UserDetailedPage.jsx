@@ -53,8 +53,7 @@ const UserDetailedPage = ({
   
   useEffect(() => {
     (async () => {
-      let events = await getUserEvents(userUid)
-      // console.log(events)
+      await getUserEvents(userUid)
     })()
   }, [])
 
