@@ -116,7 +116,8 @@ class EventForm extends Component {
       submitting, 
       pristine,
       event, 
-      cancelToggle 
+      cancelToggle,
+      loading
     } = this.props
 
     return (
@@ -174,6 +175,7 @@ class EventForm extends Component {
               />
               <Button
                 disabled={invalid || submitting || pristine}
+                loading={loading}
                 positive
                 type='submit'
               >
@@ -187,6 +189,7 @@ class EventForm extends Component {
                     : () => history.push('/events')
                 }
                 type='button'
+                disabled={loading}
               >
                 Cancel
               </Button>
@@ -221,7 +224,8 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     initialValues: event,
-    event
+    event,
+    loading: state.async.loading
   }
 }
 

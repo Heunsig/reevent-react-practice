@@ -21,7 +21,8 @@ const EventDetailedPage = ({
   goingToEvent, 
   cancelGoingToEvent,
   addEventComment,
-  eventChat
+  eventChat,
+  loading
 }) => {
 
   useEffect(() => {
@@ -49,6 +50,7 @@ const EventDetailedPage = ({
       <Grid.Column width={10}>
         <EventDetailedHeader 
           event={event} 
+          loading={loading}
           isGoing={isGoing} 
           isHost={isHost}
           goingToEvent={goingToEvent}
@@ -80,7 +82,8 @@ const mapStateToProps = (state, ownProps) => {
     event,
     auth: state.firebase.auth,
     eventChat: !isEmpty(state.firebase.data.event_chat) && 
-               objectToArray(state.firebase.data.event_chat[ownProps.match.params.id])
+               objectToArray(state.firebase.data.event_chat[ownProps.match.params.id]),
+    loading: state.async.loading
   }
 }
 export default compose(

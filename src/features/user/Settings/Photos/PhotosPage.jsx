@@ -106,7 +106,13 @@ const PhotosPage = ({
         </Grid>
 
         <Divider/>
-        <UserPhotos photos={photos} profile={profile} deletePhoto={handleDeletePhoto} setMainPhoto={handleSetMainPhoto}/>
+        <UserPhotos 
+          photos={photos} 
+          profile={profile} 
+          deletePhoto={handleDeletePhoto} 
+          setMainPhoto={handleSetMainPhoto}
+          loading={loading}
+        />
       </Segment>
     );
 }
