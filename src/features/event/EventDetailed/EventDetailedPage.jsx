@@ -11,6 +11,7 @@ import EventDetailedSidebar from './EventDetailedSidebar'
 import { objectToArray, createDataTree } from '../../../app/common/util/helpers'
 import { goingToEvent, cancelGoingToEvent } from '../../user/userActions'
 import { addEventComment } from '../eventActions'
+import { openModal } from '../../modals/modalActions'
 
 const EventDetailedPage = ({
   event, 
@@ -22,7 +23,8 @@ const EventDetailedPage = ({
   cancelGoingToEvent,
   addEventComment,
   eventChat,
-  loading
+  loading,
+  openModal
 }) => {
 
   useEffect(() => {
@@ -44,6 +46,7 @@ const EventDetailedPage = ({
   const isHost = event.hostUid === auth.uid
   const isGoing = attendees && attendees.some(a => a.id === auth.uid)
   const chatTree = !isEmpty(eventChat) && createDataTree(eventChat)
+  const authenticated = auth.isLoaded && !auth.isEmpty;
 
   return (
     <Grid>
@@ -55,13 +58,17 @@ const EventDetailedPage = ({
           isHost={isHost}
           goingToEvent={goingToEvent}
           cancelGoingToEvent={cancelGoingToEvent}
+          authenticated={authenticated}
+          openModal={openModal}
         />
         <EventDetailedInfo event={event}/>
-        <EventDetailedChat
-          eventChat={chatTree}
-          addEventComment={addEventComment}
-          eventId={event.id}
-        />
+        {authenticated && 
+          <EventDetailedChat
+            eventChat={chatTree}
+            addEventComment={addEventComment}
+            eventId={event.id}
+          />
+        }
       </Grid.Column>
       <Grid.Column width={6}>
         <EventDetailedSidebar attendees={attendees}/>
@@ -88,7 +95,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 export default compose(
   withFirestore,
-  connect(mapStateToProps, { goingToEvent, cancelGoingToEvent, addEventComment }),
+  connect(mapStateToProps, { goingToEvent, cancelGoingToEvent, addEventComment, openModal }),
   firebaseConnect((props) => ([`event_chat/${props.match.params.id}`]))
  )(EventDetailedPage)
 

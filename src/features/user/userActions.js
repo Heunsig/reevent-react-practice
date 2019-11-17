@@ -253,12 +253,10 @@ export const getUserEvents = (userUid, activeTab) => {
       }
       
       dispatch({type: FETCH_EVENTS, payload: {events}})
-  
       dispatch(asyncActionFinish())
     } catch (error) {
       console.log(error)
       dispatch(asyncActionError())
     }
-
   }
 }

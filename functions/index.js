@@ -28,7 +28,7 @@ exports.createActivity = functions.firestore
 
     return admin.firestore().collection(`activity`)
       .add(activity)
-      .then((docRef) => {
+      .then((docRef) => { 
         return console.log('Activity created with ID: ', docRef.id)
       })
       .catch((err) => {
