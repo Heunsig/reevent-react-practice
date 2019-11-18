@@ -6,7 +6,7 @@ import TextInput from '../../../app/common/form/TextInput';
 import { login, socialLogin } from '../authActions'
 import SocialLogin from '../SocialLogin/SocialLogin'
 
-const LoginForm = ({login, handleSubmit, error, socialLogin}) => {
+const LoginForm = ({login, handleSubmit, error, socialLogin, submitting}) => {
   return (
     <Form size="large" onSubmit={handleSubmit(login)} autoComplete='off'>
       <Segment>
@@ -23,7 +23,11 @@ const LoginForm = ({login, handleSubmit, error, socialLogin}) => {
           placeholder="password"
         />
         {error && <Label basic color='red'>{error}</Label>}
-        <Button fluid size="large" color="teal">
+        <Button 
+          loading={submitting} 
+          fluid size="large" 
+          color="teal"
+        >
           Login
         </Button>
         <Divider horizontal>

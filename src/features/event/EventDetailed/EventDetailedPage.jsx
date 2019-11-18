@@ -12,9 +12,11 @@ import { objectToArray, createDataTree } from '../../../app/common/util/helpers'
 import { goingToEvent, cancelGoingToEvent } from '../../user/userActions'
 import { addEventComment } from '../eventActions'
 import { openModal } from '../../modals/modalActions'
+import LoadingComponent from '../../../app/layout/LoadingComponent'
+import NotFound from '../../../app/layout/NotFound'
 
 const EventDetailedPage = ({
-  event, 
+  event,
   firestore, 
   match, 
   history, 
@@ -24,7 +26,8 @@ const EventDetailedPage = ({
   addEventComment,
   eventChat,
   loading,
-  openModal
+  openModal,
+  requesting
 }) => {
 
   useEffect(() => {
@@ -42,11 +45,17 @@ const EventDetailedPage = ({
 
   }, [firestore, match, history])
 
-  const attendees = event && event.attendees && objectToArray(event.attendees)
+  const attendees = event && event.attendees && objectToArray(event.attendees).sort((a, b) => {
+    return a.joinDate.toDate() - b.joinDate.toDate()
+  })
   const isHost = event.hostUid === auth.uid
   const isGoing = attendees && attendees.some(a => a.id === auth.uid)
   const chatTree = !isEmpty(eventChat) && createDataTree(eventChat)
   const authenticated = auth.isLoaded && !auth.isEmpty;
+  const loadingEvent = requesting[`events/${match.params.id}`]
+
+  if (loadingEvent) return <LoadingComponent/>
+  if (Object.keys(event).length === 0) return <NotFound/>
 
   return (
     <Grid>
@@ -87,6 +96,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return { 
     event,
+    requesting: state.firestore.status.requesting,
     auth: state.firebase.auth,
     eventChat: !isEmpty(state.firebase.data.event_chat) && 
                objectToArray(state.firebase.data.event_chat[ownProps.match.params.id]),
@@ -96,7 +106,8 @@ const mapStateToProps = (state, ownProps) => {
 export default compose(
   withFirestore,
   connect(mapStateToProps, { goingToEvent, cancelGoingToEvent, addEventComment, openModal }),
-  firebaseConnect((props) => ([`event_chat/${props.match.params.id}`]))
+  firebaseConnect((props) => ([`event_chat/${props.match.params.id}`])),
+  
  )(EventDetailedPage)
 
  

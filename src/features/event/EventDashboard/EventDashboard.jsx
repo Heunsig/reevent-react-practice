@@ -91,7 +91,7 @@ const query = [
 
 const mapStateToProps = (state) => {
   return {
-    events: state.events,
+    events: state.events.events,
     loading: state.async.loading,
     activities: state.firestore.ordered.activity
     // events: state.firestore.ordered.events,
