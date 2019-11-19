@@ -10,7 +10,7 @@ import UsderDetailedDescription from './UsderDetailedDescription'
 import UserDetailedEvents from './UserDetailedEvents'
 import { userDetailedQuery } from '../userQueires'
 import LoadingComponent from '../../../app/layout/LoadingComponent'
-import { getUserEvents } from '../userActions'
+import { getUserEvents, followUser, unfollowUser, getFollowingUsers } from '../userActions'
 
 const mapStateToProps = (state, ownProps) => {
   let userUid = null
@@ -26,16 +26,18 @@ const mapStateToProps = (state, ownProps) => {
     profile,
     userUid,
     auth: state.firebase.auth,
-    // profile: state.firebase.profile,
     photos: state.firestore.ordered.photos,
     requesting: state.firestore.status.requesting,
     events: state.events.userEvents,
-    eventsLoading: state.async.loading
+    eventsLoading: state.async.loading,
+    followingUsers: state.user.followingUsers
   }
 }
 
 const actions = {
-  getUserEvents
+  getUserEvents,
+  followUser,
+  unfollowUser
 }
 
 
@@ -48,7 +50,10 @@ const UserDetailedPage = ({
   getUserEvents,
   userUid,
   events,
-  eventsLoading
+  eventsLoading,
+  followUser,
+  unfollowUser,
+  followingUsers
 }) => {
   
   useEffect(() => {
@@ -61,7 +66,7 @@ const UserDetailedPage = ({
   const loading = Object.values(requesting).some(a => a === true)
 
   let changeTab = (e, data) => {
-    console.log(data)
+    // console.log(data)
     getUserEvents(userUid, data.activeIndex)
   }
 
@@ -71,7 +76,13 @@ const UserDetailedPage = ({
     <Grid>
       <UserDetailedHeader profile={profile}/>
       <UsderDetailedDescription profile={profile}/>
-      <UserDetailedSidebar isCurrentUser={isCurrentUser}/>
+      <UserDetailedSidebar
+        isCurrentUser={isCurrentUser} 
+        followUser={followUser}
+        unfollowUser={unfollowUser}
+        profile={profile}
+        followingUsers={followingUsers}
+      />
       {photos && photos.length > 0 &&
         <Photos photos={photos}/>
       }

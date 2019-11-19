@@ -204,7 +204,7 @@ export const cancelGoingToEvent = (event) => {
       })
 
       await firestore.delete(`event_attendee/${event.id}_${user.uid}`)
-      toastr('Success', 'You have removed yourself from the event')
+      toastr.success('Success', 'You have removed yourself from the event')
     } catch (error) {
       console.log(error)
     }
@@ -257,6 +257,91 @@ export const getUserEvents = (userUid, activeTab) => {
     } catch (error) {
       console.log(error)
       dispatch(asyncActionError())
+    }
+  }
+}
+
+export const followUser = (userToFollow) => {
+  return async (dispatch, getState, { getFirestore }) => {
+    const firestore = getFirestore()
+    const user = firebase.auth().currentUser
+    const following = {
+      displayName: userToFollow.displayName,
+      city: userToFollow.city || 'Unkown City',
+      photoURL: userToFollow.photoURL || '/assets/user.png'
+    }
+
+    try {
+
+      await firestore.set({
+        collection: 'users',
+        doc: user.uid,
+        subcollections:[{ collection: 'following', doc: userToFollow.id }]
+      }, following)
+
+      dispatch({
+        type: 'ADD_FOLLOWING_USER',
+        payload: {
+          newUser: { 
+            [userToFollow.id]: following 
+          }
+        }
+      })
+
+      toastr.success('Success', `You begin to follow ${userToFollow.displayName}`)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
+
+export const unfollowUser = (userToUnfollow) => {
+  return async (dispatch, getState, { getFirestore }) => {
+    const firestore = firebase.firestore()
+    const user = firebase.auth().currentUser
+
+    try {
+      await firestore.collection('users')
+                      .doc(user.uid)
+                      .collection('following')
+                      .doc(userToUnfollow.id)
+                      .delete()
+
+      dispatch({
+        type: 'DELETE_FOLLOWING_USER',
+        payload:{
+          userId: userToUnfollow.id
+        }
+      })
+
+      toastr.success('Success', `You unfollowed ${userToUnfollow.displayName}`)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
+
+export const getFollowingUsers = () => {
+  return async (dispatch, getState, { getFirestore }) => {
+    const firestore = firebase.firestore()
+    const user = firebase.auth().currentUser
+    let followingUsersRef = firestore.collection('users').doc(user.uid).collection('following')
+    try {
+      const followingUsers = {}
+      const querySnap = await followingUsersRef.get()
+
+      for (let i = 0 ; i < querySnap.docs.length ; i++) {
+        followingUsers[querySnap.docs[i].id] = querySnap.docs[i].data()
+      }
+
+      dispatch({
+        type: 'FETCH_FOLLOWING_USERS',
+        payload: {
+          followingUsers
+        }
+      })
+    } catch (error) {
+      console.log(error)
     }
   }
 }

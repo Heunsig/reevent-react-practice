@@ -1,11 +1,12 @@
 import React, { Component, Fragment } from 'react';
 import { Container } from 'semantic-ui-react'
+import { connect } from 'react-redux'
 import { Route, Switch, withRouter } from 'react-router-dom'
 import NavBar from '../../features/nav/NavBar/NavBar'
 import HomePage from '../../features/home/HomePage'
 import EventDashboard from '../../features/event/EventDashboard/EventDashboard'
 import EventDetailedPage from '../../features/event/EventDetailed/EventDetailedPage'
-import PeopleDashboard from '../../features/user/PeopleDashboard/PageDashboard'
+import PeopleDashboard from '../../features/user/PeopleDashboard/PeopleDashboard'
 import UserDetailedPage from '../../features/user/UserDetailed/UserDetailedPage'
 import SettingsDashboard from '../../features/user/Settings/SettingsDashboard'
 import EventForm from '../../features/event/EventForm/EventForm'
@@ -14,7 +15,17 @@ import ModalManager from '../../features/modals/ModalManage'
 import { UserIsAuthenticated } from '../../features/auth/authWrapper'
 import NotFound from './NotFound'
 
+import { getFollowingUsers } from '../../features/user/userActions'
+
+const actions = {
+  getFollowingUsers
+}
+
 class App extends Component {
+  async componentDidMount () {
+    await this.props.getFollowingUsers()
+  }
+
   render() {
     return (
       <Fragment>
@@ -45,4 +56,4 @@ class App extends Component {
 }
 
 
-export default withRouter(App)
+export default withRouter(connect(null, actions)(App))

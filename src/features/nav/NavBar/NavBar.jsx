@@ -37,10 +37,8 @@ class NavBar extends Component {
           <Menu.Item as={ NavLink } exact to='/events'>Events</Menu.Item>
           {authenticated &&  
             <Fragment>
-              {/*
-                <Menu.Item as={ NavLink } to='/people'>People</Menu.Item>
-                <Menu.Item as={ NavLink } to='/test'>Test</Menu.Item>
-              */}
+              <Menu.Item as={ NavLink } to='/people'>People</Menu.Item>
+              <Menu.Item as={ NavLink } to='/test'>Test</Menu.Item>
               <Menu.Item>
                 <Button 
                   as={ Link } 
