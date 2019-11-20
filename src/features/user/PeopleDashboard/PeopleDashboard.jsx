@@ -9,31 +9,28 @@ import { compose }  from 'redux'
 const mapState = (state) => {
   return {
     auth: state.firebase.auth,
-    usersFollowing: state.firestore.ordered.users,
-    followingUsers: state.user.followingUsers
+    followers: state.firestore.ordered.followers,
+    followings: state.firestore.ordered.following,
   }
 }
 
-const PeopleDashboard = ({followingUsers, usersFollowing, auth}) => {
-  const usersf = usersFollowing || []
-  const fusers = objectToArray(followingUsers) || []
-
+const PeopleDashboard = ({followers, followings}) => {
   return (
     <Grid>
       <Grid.Column width={16}>
         <Segment>
           <Header dividing content="People following me" />
           <Card.Group itemsPerRow={8} stackable>
-            {usersf.map(user => (
-              <PersonCard key={user.id} user={user}/>
+            {followers && followers.map(follower => (
+              <PersonCard key={follower.id} user={follower}/>
             ))}
           </Card.Group>
         </Segment>
         <Segment>
           <Header dividing content="People I'm following" />
           <Card.Group itemsPerRow={8} stackable>
-          {fusers.map(user => (
-            <PersonCard key={user.id} user={user}/>
+          {followings && followings.map(following => (
+            <PersonCard key={following.id} user={following}/>
           ))}
           </Card.Group>
         </Segment>
@@ -43,23 +40,23 @@ const PeopleDashboard = ({followingUsers, usersFollowing, auth}) => {
 };
 
 const query = (auth) => {
-  return [{
+  return [
+  {
     collection: 'users',
     doc: auth.uid,
-    subcollections: [{ collection: 'follower' }]
-  }]
+    subcollections: [{ collection: 'followers' }],
+    storeAs: 'followers'
+  },
+  {
+    collection: 'users',
+    doc: auth.uid,
+    subcollections: [{ collection: 'following' }],
+    storeAs: 'following'
+  }
+ ]
 }
 
 export default compose(
   connect(mapState),
   firestoreConnect(({ auth }) => query(auth))
 )(PeopleDashboard)
-
-// connect(mapState)(firestoreConnect((auth) => query(auth.uid))());
-
-
-// export default compose(
-//   connect(mapStateToProps, actions),
-//   firestoreConnect((auth, userUid)=> userDetailedQuery(auth, userUid))
-// )(UserDetailedPage)
-

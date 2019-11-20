@@ -15,15 +15,15 @@ import ModalManager from '../../features/modals/ModalManage'
 import { UserIsAuthenticated } from '../../features/auth/authWrapper'
 import NotFound from './NotFound'
 
-import { getFollowingUsers } from '../../features/user/userActions'
+// import { getFollowingUsers } from '../../features/user/userActions'
 
 const actions = {
-  getFollowingUsers
+  // getFollowingUsers
 }
 
 class App extends Component {
   async componentDidMount () {
-    await this.props.getFollowingUsers()
+    // await this.props.getFollowingUsers()
   }
 
   render() {

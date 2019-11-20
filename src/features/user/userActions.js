@@ -301,15 +301,6 @@ export const followUser = (userToFollow) => {
         subcollections:[{ collection: 'following', doc: userToFollow.id }]
       }, following)
 
-      dispatch({
-        type: 'ADD_FOLLOWING_USER',
-        payload: {
-          newUser: { 
-            [userToFollow.id]: following 
-          }
-        }
-      })
-
       toastr.success('Success', `You begin to follow ${userToFollow.displayName}`)
     } catch (error) {
       console.log(error)
@@ -329,12 +320,6 @@ export const unfollowUser = (userToUnfollow) => {
                       .doc(userToUnfollow.id)
                       .delete()
 
-      dispatch({
-        type: 'DELETE_FOLLOWING_USER',
-        payload:{
-          userId: userToUnfollow.id
-        }
-      })
 
       toastr.success('Success', `You unfollowed ${userToUnfollow.displayName}`)
     } catch (error) {
@@ -343,27 +328,27 @@ export const unfollowUser = (userToUnfollow) => {
   }
 }
 
-export const getFollowingUsers = () => {
-  return async (dispatch, getState, { getFirestore }) => {
-    const firestore = firebase.firestore()
-    const user = firebase.auth().currentUser
-    let followingUsersRef = firestore.collection('users').doc(user.uid).collection('following')
-    try {
-      const followingUsers = {}
-      const querySnap = await followingUsersRef.get()
+// export const getFollowingUsers = () => {
+//   return async (dispatch, getState, { getFirestore }) => {
+//     const firestore = firebase.firestore()
+//     const user = firebase.auth().currentUser
+//     let followingUsersRef = firestore.collection('users').doc(user.uid).collection('following')
+//     try {
+//       const followingUsers = {}
+//       const querySnap = await followingUsersRef.get()
 
-      for (let i = 0 ; i < querySnap.docs.length ; i++) {
-        followingUsers[querySnap.docs[i].id] = querySnap.docs[i].data()
-      }
+//       for (let i = 0 ; i < querySnap.docs.length ; i++) {
+//         followingUsers[querySnap.docs[i].id] = querySnap.docs[i].data()
+//       }
 
-      dispatch({
-        type: 'FETCH_FOLLOWING_USERS',
-        payload: {
-          followingUsers
-        }
-      })
-    } catch (error) {
-      console.log(error)
-    }
-  }
-}
+//       dispatch({
+//         type: 'FETCH_FOLLOWING_USERS',
+//         payload: {
+//           followingUsers
+//         }
+//       })
+//     } catch (error) {
+//       console.log(error)
+//     }
+//   }
+// }

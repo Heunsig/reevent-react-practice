@@ -65,48 +65,51 @@ exports.createActivity = functions.firestore
    })
 
  exports.followUserActivity = functions.firestore
-    .document('users/{userId}/{followingCollectionId}/{followingUserId}')
+    .document('users/{followerUid}/following/{followingUid}')
     .onCreate(async (event, context) => {
-      if (context.params.followingCollectionId === 'following') {
+      console.log({context})
+      
+      const followerUid = context.params.followerUid
+      const followingUid = context.params.followingUid
 
-        console.log({context})
-
-        let userDocRef = await admin.firestore().collection('users').doc(context.params.userId).get()
-        let userData = userDocRef.data()
-
-        return admin.firestore()
+      const followerDoc = admin
+        .firestore()
         .collection('users')
-        .doc(context.params.followingUserId)
-        .collection('follower')
-        .doc(context.params.userId)
-        .set({
-          displayName: userData.displayName,
-          city: userData.city || 'Unkown City',
-          photoURL: userData.photoURL || '/assets/user.png'
-         })
-         .then((docRef) => {
-            return console.log('Activity created with ID: ', docRef.id)
-          })
-          .catch((err) => {
-            return console.log('Error adding activity', err)
-          })
-      }
+        .doc(followerUid)
 
-      return false
+      console.log(followerDoc)
+
+      return followerDoc.get().then(doc => {
+        let userData = doc.data()
+        console.log({ userData })
+        let follower = {
+          displayName: userData.displayName,
+          photoURL: userData.photoURL || '/assets/user.png',
+          city: userData.city || 'unknown city'
+        }
+
+        return admin
+          .firestore()
+          .collection('users')
+          .doc(followingUid)
+          .collection('followers')
+          .doc(followerUid)
+          .set(follower)
+      })
     })
 
  exports.unfollowUserActivity = functions.firestore
-   .document('users/{userId}/{subCollection}/{followingUserId}')
+   .document('users/{followerUid}/following/{followingUid}')
    .onDelete(async (event, context) => {
      console.log({context})
-     if (context.params.subCollection === 'following') {
-       console.log({context})
-       return admin.firestore()
-         .collection('users') 
-         .doc(context.params.followingUserId)
-         .collection('follower')
-         .doc(context.params.userId)
-         .delete()
-     }
-     return false
+
+     const followrUid = context.params.followerUid
+     const followingUid = context.params.followingUid
+
+     return admin.firestore()
+       .collection('users') 
+       .doc(followingUid)
+       .collection('followers')
+       .doc(followrUid)
+       .delete()
    })

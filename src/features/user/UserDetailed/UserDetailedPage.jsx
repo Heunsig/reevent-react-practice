@@ -10,7 +10,7 @@ import UsderDetailedDescription from './UsderDetailedDescription'
 import UserDetailedEvents from './UserDetailedEvents'
 import { userDetailedQuery } from '../userQueires'
 import LoadingComponent from '../../../app/layout/LoadingComponent'
-import { getUserEvents, followUser, unfollowUser, getFollowingUsers } from '../userActions'
+import { getUserEvents, followUser, unfollowUser } from '../userActions'
 
 const mapStateToProps = (state, ownProps) => {
   let userUid = null
@@ -30,7 +30,7 @@ const mapStateToProps = (state, ownProps) => {
     requesting: state.firestore.status.requesting,
     events: state.events.userEvents,
     eventsLoading: state.async.loading,
-    followingUsers: state.user.followingUsers
+    following: state.firestore.ordered.following
   }
 }
 
@@ -53,7 +53,7 @@ const UserDetailedPage = ({
   eventsLoading,
   followUser,
   unfollowUser,
-  followingUsers
+  following
 }) => {
   
   useEffect(() => {
@@ -64,11 +64,13 @@ const UserDetailedPage = ({
 
   const isCurrentUser = auth.uid === match.params.id
   const loading = Object.values(requesting).some(a => a === true)
+  const isFollowing = !isEmpty(following)
 
   let changeTab = (e, data) => {
     // console.log(data)
     getUserEvents(userUid, data.activeIndex)
   }
+
 
   if (loading) return <LoadingComponent />
 
@@ -77,11 +79,11 @@ const UserDetailedPage = ({
       <UserDetailedHeader profile={profile}/>
       <UsderDetailedDescription profile={profile}/>
       <UserDetailedSidebar
+        isFollowing={isFollowing}
         isCurrentUser={isCurrentUser} 
         followUser={followUser}
         unfollowUser={unfollowUser}
         profile={profile}
-        followingUsers={followingUsers}
       />
       {photos && photos.length > 0 &&
         <Photos photos={photos}/>
@@ -97,6 +99,6 @@ const UserDetailedPage = ({
 
 export default compose(
   connect(mapStateToProps, actions),
-  firestoreConnect((auth, userUid)=> userDetailedQuery(auth, userUid))
+  firestoreConnect((auth, userUid, match)=> userDetailedQuery(auth, userUid, match))
 )(UserDetailedPage)
 
