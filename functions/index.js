@@ -63,3 +63,50 @@ exports.createActivity = functions.firestore
         return console.log('Error adding activity', err)
       })
    })
+
+ exports.followUserActivity = functions.firestore
+    .document('users/{userId}/{followingCollectionId}/{followingUserId}')
+    .onCreate(async (event, context) => {
+      if (context.params.followingCollectionId === 'following') {
+
+        console.log({context})
+
+        let userDocRef = await admin.firestore().collection('users').doc(context.params.userId).get()
+        let userData = userDocRef.data()
+
+        return admin.firestore()
+        .collection('users')
+        .doc(context.params.followingUserId)
+        .collection('follower')
+        .doc(context.params.userId)
+        .set({
+          displayName: userData.displayName,
+          city: userData.city || 'Unkown City',
+          photoURL: userData.photoURL || '/assets/user.png'
+         })
+         .then((docRef) => {
+            return console.log('Activity created with ID: ', docRef.id)
+          })
+          .catch((err) => {
+            return console.log('Error adding activity', err)
+          })
+      }
+
+      return false
+    })
+
+ exports.unfollowUserActivity = functions.firestore
+   .document('users/{userId}/{subCollection}/{followingUserId}')
+   .onDelete(async (event, context) => {
+     console.log({context})
+     if (context.params.subCollection === 'following') {
+       console.log({context})
+       return admin.firestore()
+         .collection('users') 
+         .doc(context.params.followingUserId)
+         .collection('follower')
+         .doc(context.params.userId)
+         .delete()
+     }
+     return false
+   })

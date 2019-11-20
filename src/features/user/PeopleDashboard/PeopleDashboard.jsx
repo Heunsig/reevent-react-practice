@@ -2,16 +2,20 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { objectToArray } from '../../../app/common/util/helpers'
 import { Grid, Segment, Header, Card } from 'semantic-ui-react';
+import { firestoreConnect } from 'react-redux-firebase'
 import PersonCard from './PersonCard';
+import { compose }  from 'redux'
 
 const mapState = (state) => {
   return {
+    auth: state.firebase.auth,
+    usersFollowing: state.firestore.ordered.users,
     followingUsers: state.user.followingUsers
   }
 }
 
-const PeopleDashboard = ({followingUsers}) => {
-
+const PeopleDashboard = ({followingUsers, usersFollowing, auth}) => {
+  const usersf = usersFollowing || []
   const fusers = objectToArray(followingUsers) || []
 
   return (
@@ -20,11 +24,9 @@ const PeopleDashboard = ({followingUsers}) => {
         <Segment>
           <Header dividing content="People following me" />
           <Card.Group itemsPerRow={8} stackable>
-            {/*<PersonCard />
-            <PersonCard />
-            <PersonCard />
-            <PersonCard />
-            <PersonCard />*/}
+            {usersf.map(user => (
+              <PersonCard key={user.id} user={user}/>
+            ))}
           </Card.Group>
         </Segment>
         <Segment>
@@ -40,4 +42,24 @@ const PeopleDashboard = ({followingUsers}) => {
   );
 };
 
-export default connect(mapState)(PeopleDashboard);
+const query = (auth) => {
+  return [{
+    collection: 'users',
+    doc: auth.uid,
+    subcollections: [{ collection: 'follower' }]
+  }]
+}
+
+export default compose(
+  connect(mapState),
+  firestoreConnect(({ auth }) => query(auth))
+)(PeopleDashboard)
+
+// connect(mapState)(firestoreConnect((auth) => query(auth.uid))());
+
+
+// export default compose(
+//   connect(mapStateToProps, actions),
+//   firestoreConnect((auth, userUid)=> userDetailedQuery(auth, userUid))
+// )(UserDetailedPage)
+

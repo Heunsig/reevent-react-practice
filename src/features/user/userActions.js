@@ -9,13 +9,35 @@ import firebase from '../../app/config/firebase'
 import { FETCH_USER_EVENTS } from '../event/eventConstant'
 
 
-export const updateProfile = (user) => 
+export const updateProfile = (updatedUserData) => 
   async (dispatch, getState, {getFirebase}) => {
-    const firebase = getFirebase()
-    const { isLoaded, isEmpty, ...updatedUser } = user
-    
+    const firestore = firebase.firestore()
+    const user = firebase.auth().currentUser
+    const today = new Date()
+
+    const { isLoaded, isEmpty, ...updatedUser } = updatedUserData
+
+    let userDocRef = firestore.collection('users').doc(user.uid)
+    let eventsDocRef = firestore.collection('events')
+
     try {
-      await firebase.updateProfile(updatedUser)
+      // await firebase.updateProfile(updatedUser)
+      let batch = firestore.batch()
+      batch.update(userDocRef, updatedUser)
+
+      let eventsHostedByQuery = await eventsDocRef
+        .where('hostUid', '==', user.uid)
+        .where('date', '>=', today)
+
+      let eventsHostedBySnap = await eventsHostedByQuery.get()
+      
+      for (let i = 0 ; i < eventsHostedBySnap.docs.length ; i++) {
+        let eventDocRef = await firestore.collection('events').doc(eventsHostedBySnap.docs[i].id)
+        batch.update(eventDocRef, {'hostedBy': updatedUser.displayName})
+      }
+       
+      await batch.commit()
+
       toastr.success('Success', 'Your profile has been updated')
     } catch (error) {
       console.log(error)
