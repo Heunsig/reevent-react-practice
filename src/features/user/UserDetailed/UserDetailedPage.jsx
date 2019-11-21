@@ -67,7 +67,6 @@ const UserDetailedPage = ({
   const isFollowing = !isEmpty(following)
 
   let changeTab = (e, data) => {
-    // console.log(data)
     getUserEvents(userUid, data.activeIndex)
   }
 

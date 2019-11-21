@@ -1,4 +1,5 @@
 export const userDetailedQuery = ({auth, userUid, match}) => {
+  // console.log('the query executed')
   if (userUid !== null) {
     return [{
       collection: 'users',
